@@ -1,8 +1,12 @@
 var users = {};
 var myInfo = {};
 
-myInfo.RSAKey = myRSAkey;
-myInfo.publicKey = myPublicKeyString;
+var keysStored = false;
+if (!keysStored){
+  generate_keys();
+  myInfo.RSAKey = myRSAkey;
+  myInfo.publicKey = myPublicKeyString;
+}
 
 chrome.storage.onChanged.addListener(function(changes, namespace){
   var i = 1;
