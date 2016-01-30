@@ -12,16 +12,11 @@ if (!keysStored){
   myInfo.PassPhrase = myPassPhrase;
   myInfo.RSAKey = myRSAkey;
   myInfo.publicKey = myPublicKeyString;
-<<<<<<< HEAD
   keysStored = true;
   console.log("Your passphrase is: "+myInfo.PassPhrase);
   console.log("Your public key is: "+myInfo.publicKey);
   console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
-=======
-  console.log("Your public key is: "+myInfo.publicKey);
-  keysStored = true;
   chrome.storage.sync.set({"keysStored": true}, function(){});
->>>>>>> 801f8f57c320373d5b684680df10f7d0c37dbe07
 }
 
 function saveUser(name, key){
