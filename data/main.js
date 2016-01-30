@@ -53,7 +53,7 @@ function setUpNub(nub) {
     var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
       if(e.keyCode === 13) {
         var str = newTa.val()+" asldkfjasdflk\r\n"+String.fromCharCode(13);
-        chrome.runtime.sendMessage({option: "encrypt_message", data: {data: str, username: username}}, function(crypt) {
+        chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(crypt) {
           ta.val(str);
         });
         //$('body').append('<script type="text/javascript">'+code+'</script>');
@@ -65,9 +65,7 @@ function setUpNub(nub) {
     var buttonslot = ta.parent().parent().children('div:last-child');
     var keybutton = $('<a class="_6gb _6gf" role="button" title="Send your public key" tabindex="0"></a>');
     keybutton.click(function() {
-      console.log('click');
-      chrome.runtime.sendMessage({option: "get_keys", data: {}}, function(input) {
-        console.log(input.data);
+      chrome.runtime.sendMessage({option: "get_keys"}, function(input) {
         var msg = "my_key\n"+JSON.parse(input.data).publicKey;
         console.log(msg);
         ta.val(msg);
@@ -82,20 +80,37 @@ function setUpNub(nub) {
   
   
   
-  var messages = nub.find('div.conversation > div > div:last-child > div');
-  messages.each(function() {
-    //console.log($(this).text());
+  var messages = nub.find('div.conversation > div > div:last-child');
+  var msgObs = new MutationObserver(function(mutations) {
+    console.log(mutations);
+    mutations.forEach(function(mutation) {
+      for(var i=0; i<mutation.addedNodes.length; i++) {
+        $(mutation.addedNodes[i]).find('span').each(function() {
+          if(!$(this).attr('class')) {
+            var elem = $(this);
+            console.log('Received message');
+            var me = elem.parent().parent().parent().parent().parent().parent().data('tooltip-position') === 'right';
+            console.log(me);
+            chrome.runtime.sendMessage({option: "handle_string", data: elem.text(), username: username}, function(result) {
+              elem.text(result.data);
+            });
+          }
+        });
+      }
+    });
   });
+  msgObs.observe(messages.get(0), {childList: true, subtree:true});
 }
 
 var observer = new MutationObserver(function(mutations) {
   console.log(mutations);
   mutations.forEach(function(mutation) {
-    for (var i = 0; i < mutation.addedNodes.length; i++)
+    for (var i = 0; i < mutation.addedNodes.length; i++) {
       var nub = $(mutation.addedNodes[i]);
       if(nub && nub.hasClass('fbNub')) {
         setUpNub(nub);
       }
+    }
   });
 });
 
