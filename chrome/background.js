@@ -7,6 +7,7 @@ chrome.storage.sync.get("keysStored", function(items){
     keysStored = true;
 });
 
+console.log("Keyspre: "+keysStored);
 if (!keysStored){
   generateKeys();
   myInfo.PassPhrase = myPassPhrase;
@@ -16,7 +17,10 @@ if (!keysStored){
   console.log("Your passphrase is: "+myInfo.PassPhrase);
   console.log("Your public key is: "+myInfo.publicKey);
   console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
-  chrome.storage.sync.set({"keysStored": true}, function(){});
+  chrome.storage.sync.set({"keysStored": true}, function(){
+    console.log("Keys stored");
+  });
+  console.log("Keys: "+keysStored);
 }
 
 function saveUser(name, key){
@@ -42,13 +46,17 @@ function handleString(string, username){
   var message = string.substr(string.indexOf(header)+header.length);
   switch (header){
     case "send_key": //send your key to me
-      return "my_key\n"+myInfo.publicKey;
+      //return {option: "send", data: "my_key\n"+myInfo.publicKey};
       break;
     case "encrypted_message": //here's a message from me
       return decryptString(message);
       break;
     case "my_key": //store my key with my username
       users[username] = message;
+      return "[key received]";
+      break;
+    default:
+      return string;
       break;
   }
   return "";
@@ -98,6 +106,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       myInfo.publicKey = request.data.publicKey;
       myInfo.privateKey = request.data.privateKey;
       myInfo.passPhrase = request.data.passPhrase;
+      users = request.data.buddies;
       break;
     case "get_keys":
       sendResponse({
@@ -106,11 +115,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
           publicKey: myInfo.publicKey,
           privateKey: myInfo.RSAKey,
           passPhrase: myInfo.PassPhrase,
+          buddies: users,
         }),
       });
       break;
     case "handle_string":
-      handleString(request.data, request.username);
+      sendResponse({
+        option: "handle_result",
+        data: handleString(request.data, request.username),
+      });
       break;
   }
 });
