@@ -7,6 +7,9 @@ function run() {
       return;
     console.log(name);
   });
+
+  var MattsRSAkey = cryptico.generateRSAKey(PassPhrase, Bits);
+  
 }
 
 setInterval(run, 5000);
