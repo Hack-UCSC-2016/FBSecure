@@ -50,7 +50,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
   console.log("run in window");
   switch (request.option) {
     case "run_code_in_window":
-      chrome.tabs.executeScript(sender.tab.id, {code: request.data});
+    chrome.tabs.executeScript(sender.tab.id, {allFrames: true, code:
+                                              'var s = document.createElement("script");' +
+                                              's.textContent = '+JSON.stringify(code)+';'+
+                                              '(document.head||document.documentElement).appendChild(s);'
+                                             });
       break;
     case "encrypt_message":
       sendResponse(encryptString(request.data, request.username));
