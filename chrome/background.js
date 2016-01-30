@@ -22,8 +22,9 @@ function encryptString(string, username){
   var key = users[username];
   if (key){
     var encryptedResult = cryptico.encrypt(string, key);
+    return encryptedResult.cipher;
   }
-  return encryptedResult.cipher;
+  return "";
 }
 
 function decryptString(string){
@@ -72,7 +73,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     case "encrypt_message":
       sendResponse({
         option: "encrypted_message",
-        data: encryptString(request.data, request.username)
+        data: "encrypted_message\n"+encryptString(request.data, request.username)
       });
       break;
     case "decrypt_message":
