@@ -18,5 +18,5 @@ function handleClick(state){
 //Program starts at startup here:
 pageMod.PageMod({
    include: "*.facebook.com",
-   contentScriptFile: [self.data.url("jquery.js"), self.data.url("main.js")],
+   contentScriptFile: [self.data.url("jquery.js"), self.data.url("sjcl.js"), self.data.url("main.js")],
 });
