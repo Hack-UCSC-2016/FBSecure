@@ -29,6 +29,12 @@ function decryptString(string){
   return decryptedResult.plaintext;
 }
 
+function currentTab(cb) {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    cb(tabs[0]);
+  });
+}
+
 chrome.browserAction.onClicked.addListener(function(tab) {
   // Send a message to the active tab
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -39,7 +45,11 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-  switch (request.option){
+  console.log("run in window");
+  switch (request.option) {
+    case "run_code_in_window":
+
+      chrome.tabs.executeScript(sender.tab.id, {code: request.data});
     case "encrypt_message":
       sendResponse(encryptString(request.data, request.username));
       break;
