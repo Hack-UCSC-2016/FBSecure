@@ -2,6 +2,7 @@ var self = require('sdk/self');
 var buttons = require('sdk/ui/button/action');
 var tabs = require("sdk/tabs");
 var pageMod = require("sdk/page-mod");
+var ss = require("sdk/simple-storage");
 
 var button = buttons.ActionButton({
    id: "mozilla-link",
@@ -11,11 +12,11 @@ var button = buttons.ActionButton({
 });
 
 function handleClick(state){
-   
+   console.log("You clicked me.");
 }
 
 //Program starts at startup here:
 pageMod.PageMod({
-   include: "www.facebook.com*",
+   include: "*.facebook.com",
    contentScriptFile: [self.data.url("jquery.js"), self.data.url("main.js")],
 });
