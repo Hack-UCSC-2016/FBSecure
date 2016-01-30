@@ -54,10 +54,31 @@ $(document).ready(function(){
   });
 
   $("#import").click(function(){
-    
+    $("#mid").hide();
+
+    $("#top").html("<p id=output>Enter your credentials to load keys</p><input type=\"password\" id=credentials>");
+
+    $("#credentials").keyup(function(e){
+      if (e.keyCode == 13){
+        chrome.runtime.sendMessage({option: "set_keys", data: $("#credentials").val()}, function(response){});
+
+        $("#top").hide();
+        $("#mid").show();
+      }
+    });
   });
+
   $("#export").click(function(){
     $("#mid").hide();
-    $("#message").html("<p id=output>Copy and paste this in a secure location.</p>");
+
+    $("#top").css("color", "red");
+    $("#top").html("<p id=output>Copy and paste this in a secure location.</p>");
+    $("#top").show();
+    $("#output").show();
+
+    chrome.runtime.sendMessage({option: "get_keys"}, function(response){
+      $("#bot").html("<p id=entry>"+response.data+"</p>");
+      response.data;
+    });
   });
 });
