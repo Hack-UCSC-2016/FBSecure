@@ -3,7 +3,7 @@
   "name": "fbsecure",
   "version": "0.0.1",
   "description": "A basic add-on",
-  "main": "index.js",
+  "main": "index-firefox.js",
   "author": "Cole Faust, Peter Herniman, Ray Chen",
   "engines": {
     "firefox": ">=38.0a1",
