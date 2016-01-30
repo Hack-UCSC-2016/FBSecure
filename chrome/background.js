@@ -11,8 +11,9 @@ if (!keysStored){
   generateKeys();
   myInfo.RSAKey = myRSAkey;
   myInfo.publicKey = myPublicKeyString;
-  keysStored = true;
   console.log("Your public key is: "+myInfo.publicKey);
+  keysStored = true;
+  chrome.storage.sync.set({"keysStored": true}, function(){});
 }
 
 function saveUser(name, key){
