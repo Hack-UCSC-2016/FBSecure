@@ -81,4 +81,17 @@ $(document).ready(function(){
       response.data;
     });
   });
+
+  $("#friends").click(function(){
+    $("#mid").hide();
+
+    chrome.runtime.sendMessage({option: "get_keys"}, function(response){
+      var newData = JSON.parse(response.data);
+      var pals = Object.keys(newData.buddies);
+
+      for (i=0;i<pals.length;i++) {
+        $("#bot").append(pals[i] + "<br><br>");
+      }
+    });
+  });
 });
