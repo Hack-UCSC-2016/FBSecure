@@ -13,3 +13,9 @@ var button = buttons.ActionButton({
 function handleClick(state){
    
 }
+
+//Program starts at startup here:
+pageMod.pageMod({
+   include: "www.facebook.com*",
+   contentScriptFile: [self.data.url("jquery.js"), self.data.url("main.js")];
+});
