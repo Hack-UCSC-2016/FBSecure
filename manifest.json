@@ -16,6 +16,6 @@
         "default_popup": "data/popup.html"
     },
     "background": {
-        "scripts": ["chrome/crypto.js", "chrome/background.js"]
+        "scripts": ["data/crypto.js", "chrome/background.js"]
     }
 }
