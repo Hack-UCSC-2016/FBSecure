@@ -33,3 +33,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     
   });
 });
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+  switch (request.option){
+    case "encrypt_message":
+      sendResponse(encryptString(request.data, request.username));
+      break;
+    case "decrypt_message":
+      sendResponse(decryptString(request.data));
+      break;
+  }
+});
