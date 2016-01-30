@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "FBSecure",
     "version": "0.1",
-    "permissions": ["http://*.facebook.com/*"],
+    "permissions": ["http://*.facebook.com/*", "storage"],
     "content_scripts": [
           {
               "matches": [
