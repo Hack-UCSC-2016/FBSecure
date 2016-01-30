@@ -52,7 +52,7 @@ function setUpNub(nub) {
 
     var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
       if(e.keyCode === 13) {
-        var str = newTa.val()+" asldkfjasdflk\r\n"+String.fromCharCode(13);
+        var str = newTa.val();
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
           ta.val(response.data);
         });
