@@ -1,23 +1,19 @@
-var PassPhrase = "This is a testing passphrase.";
+function makeid() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for(var i = 0; i < 14; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+var myPassPhrase = makeid();
+console.log("Your passphrase is " + myPassPhrase);
+
 var Bits = 1024;
 
-console.log(PassPhrase);
+var myRSAkey = cryptico.generateRSAKey(myPassPhrase, Bits);
 
-var myRSAKey = cryptico.generateRSAKey(PassPhrase, Bits);
-var myPublicKeyString = cryptico.publicKeyString(myRSAKey);
-
-console.log(myPublicKeyString);
-
-var messageString = "This is an example message.";
-
-console.log(messageString);
-
-var encryptedMessage = cryptico.encrypt(messageString, myPublicKeyString);
-var cipherMessage = encryptedMessage.cipher;
-
-console.log(cipherMessage);
-
-var decryptedMessage = cryptico.decrypt(cipherMessage, myRSAKey);
-var decryptedMessageString = decryptedMessage.plaintext;
-
-console.log(decryptedMessageString);
+var myPublicKeyString = cryptico.publicKeyString(myRSAkey);
+console.log("Your public key string is " + myPublicKeyString);
