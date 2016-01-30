@@ -3,9 +3,11 @@ var myInfo = {};
 
 var keysStored = false;
 if (!keysStored){
-  generate_keys();
+  generateKeys();
   myInfo.RSAKey = myRSAkey;
   myInfo.publicKey = myPublicKeyString;
+  keysStored = true;
+  console.log("Your public key is: "+myInfo.publicKey);
 }
 
 chrome.storage.onChanged.addListener(function(changes, namespace){

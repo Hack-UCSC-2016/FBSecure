@@ -8,22 +8,21 @@ function makePassPhrase() {
   return text;
 }
 
+var myRSAkey = null;
+var myPublicKeyString = null;
+var myPassPhrase = null;
+var Bits = 1024;
+
 function makeRSAKey(passPhrase) {
-	return cryptico.generateRSAKey(myPassPhrase, Bits);
+	return cryptico.generateRSAKey(passPhrase, 1024);
 }
 
 function makePublicKeyString(RSAKey) {
 	return cryptico.publicKeyString(RSAKey);
 }
 
-var myRSAkey = null;
-var myPublicKeyString = null;
-function generate_keys(){ 
-  var Bits = 1024;
-  var myPassPhrase = makePassPhrase();
+function generateKeys(){ 
+  myPassPhrase = makePassPhrase();
   myRSAkey = makeRSAKey(myPassPhrase);
   myPublicKeyString = makePublicKeyString(myRSAkey);
 }
-
-console.log("Your passphrase is " + myPassPhrase);
-console.log("Your public key string is " + myPublicKeyString);
