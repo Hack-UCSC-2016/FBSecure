@@ -8,7 +8,7 @@
               "matches": [
                   "https://www.facebook.com/*"
               ],
-              "js": ["data/jquery.js", "data/cryptico.js", "data/main.js", "chrome/chromeSpecific.js"]
+              "js": ["data/jquery.js", "data/cryptico.js", "data/cryptotest.js", "data/main.js", "chrome/chromeSpecific.js"]
           }
     ],
     "browser_action": {
