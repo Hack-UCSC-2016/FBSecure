@@ -110,7 +110,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       });
       break;
     case "handle_string":
-      handleString(request.data, request.username);
+      sendResponse({
+        option: "handle_result",
+        data: handleString(request.data, request.username),
+      });
       break;
   }
 });
