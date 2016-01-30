@@ -53,14 +53,31 @@ function setUpNub(nub) {
     var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
       if(e.keyCode === 13) {
         var str = newTa.val()+" asldkfjasdflk\r\n"+String.fromCharCode(13);
-        chrome.runtime.sendMessage({option: "encrypt_message", data: {data: str, username: username}, function(crypt) {
+        chrome.runtime.sendMessage({option: "encrypt_message", data: {data: str, username: username}}, function(crypt) {
           ta.val(str);
-        }});
+        });
         //$('body').append('<script type="text/javascript">'+code+'</script>');
         newTa.val("");
       }
     });
     ta.parent().append(newTa);
+
+    var buttonslot = ta.parent().parent().children('div:last-child');
+    var keybutton = $('<a class="_6gb _6gf" role="button" title="Send your public key" tabindex="0"></a>');
+    keybutton.click(function() {
+      console.log('click');
+      chrome.runtime.sendMessage({option: "get_keys", data: {}}, function(input) {
+        console.log(input.data);
+        var msg = "my_key\n"+JSON.parse(input.data).publicKey;
+        console.log(msg);
+        ta.val(msg);
+      });
+    });
+    var buttonspan = $('<span class="_6gd"></span>');
+    buttonspan.append(keybutton);
+    buttonslot.append(buttonspan);
+    console.log(buttonslot.length);
+    console.log(ta.parent().parent().get(0));
   }
   
   
