@@ -16,13 +16,14 @@ function makePublicKeyString(RSAKey) {
 	return cryptico.publicKeyString(RSAKey);
 }
 
-var Bits = 1024;
-
-var myPassPhrase = makePassPhrase();
-
-var myRSAkey = makeRSAKey(myPassPhrase);
-
-var myPublicKeyString = makePublicKeyString(myRSAkey);
+var myRSAkey = null;
+var myPublicKeyString = null;
+function generate_keys(){ 
+  var Bits = 1024;
+  var myPassPhrase = makePassPhrase();
+  myRSAkey = makeRSAKey(myPassPhrase);
+  myPublicKeyString = makePublicKeyString(myRSAkey);
+}
 
 console.log("Your passphrase is " + myPassPhrase);
 console.log("Your public key string is " + myPublicKeyString);
