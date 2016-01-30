@@ -1,7 +1,11 @@
 var users = {};
+var myInfo = {};
+
+chrome.storage.onChanged.addListener(function(changes, namespace){
+  
+});
 
 function saveUser(name, key){
-  
 }
 
 function encryptString(string, username){
