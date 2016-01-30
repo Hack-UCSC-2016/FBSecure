@@ -2,15 +2,19 @@
     "manifest_version": 2,
     "name": "FBSecure",
     "version": "0.1",
+    "permissions": ["http://*.facebook.com/*"],
     "content_scripts": [
           {
               "matches": [
-                  "https://*.facebook.com/*"
+                  "https://www.facebook.com/*"
               ],
-              "js": ["data/jquery.js", "data/main.js"]
+              "js": ["data/jquery.js", "data/main.js", "chrome/chromeSpecific.js"]
           }
     ],
     "browser_action": {
         "default_icon": "data/icon-16.png"
+    },
+    "background": {
+        "scripts": ["chrome/background.js"]
     }
 }
