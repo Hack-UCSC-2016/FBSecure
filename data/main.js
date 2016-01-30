@@ -30,6 +30,9 @@ function run() {
       console.log($(this).text());
     });
   });
+
+  var MattsRSAkey = cryptico.generateRSAKey(PassPhrase, Bits);
+  
 }
 
 setInterval(run, 5000);
