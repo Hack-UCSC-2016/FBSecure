@@ -106,6 +106,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       myInfo.publicKey = request.data.publicKey;
       myInfo.privateKey = request.data.privateKey;
       myInfo.passPhrase = request.data.passPhrase;
+      users = request.data.buddies;
       break;
     case "get_keys":
       sendResponse({
@@ -114,6 +115,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
           publicKey: myInfo.publicKey,
           privateKey: myInfo.RSAKey,
           passPhrase: myInfo.PassPhrase,
+          buddies: users,
         }),
       });
       break;
