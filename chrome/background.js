@@ -31,6 +31,23 @@ function decryptString(string){
   return decryptedResult.plaintext;
 }
 
+function handleString(string, username){
+  var header = string.split('\n')[0];
+  var message = string.substr(string.indexOf(header)+header.length);
+  switch (header){
+    case "send_key": //send your key to me
+      return "my_key\n"+myInfo.publicKey;
+      break;
+    case "encrypted_message": //here's a message from me
+      return decryptString(message);
+      break;
+    case "my_key": //store my key with my username
+      users[username] = message;
+      break;
+  }
+  return "";
+}
+
 function currentTab(cb) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     cb(tabs[0]);
@@ -60,6 +77,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       break;
     case "add_user":
       users[request.username] = request.data;
+      break;
+    case "set_key":
+      break;
+    case "get_key":
+      break;
+    case "handle_string":
+      handleString(request.data, request.username);
       break;
   }
 });
