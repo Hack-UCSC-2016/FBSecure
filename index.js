@@ -1,9 +1,15 @@
 var self = require('sdk/self');
+var buttons = require('sdk/ui/button/action');
+var tabs = require("sdk/tabs");
+var pageMod = require("sdk/page-mod");
 
-// a dummy function, to show how tests work.
-// to see how to test this function, look at test/test-index.js
-function dummy(text, callback) {
-  callback(text);
+var button = buttons.ActionButton({
+   id: "mozilla-link",
+   label: "FBSecure",
+   icon: "./icon-16.png",
+   onClick: handleClick,
+});
+
+function handleClick(state){
+   
 }
-
-exports.dummy = dummy;
