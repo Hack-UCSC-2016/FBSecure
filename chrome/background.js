@@ -25,8 +25,9 @@ function encryptString(string, username){
   var key = users[username];
   if (key){
     var encryptedResult = cryptico.encrypt(string, key);
+    return encryptedResult.cipher;
   }
-  return encryptedResult.cipher;
+  return "";
 }
 
 function decryptString(string){
@@ -70,20 +71,41 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
   console.log("run in window");
   switch (request.option) {
     case "run_code_in_window":
-      chrome.tabs.executeScript(sender.tab.id, {code: request.data});
+    chrome.tabs.executeScript(sender.tab.id, {allFrames: true, code:
+                                              'var s = document.createElement("script");' +
+                                              's.textContent = '+JSON.stringify(code)+';'+
+                                              '(document.head||document.documentElement).appendChild(s);'
+                                             });
       break;
     case "encrypt_message":
-      sendResponse(encryptString(request.data, request.username));
+      sendResponse({
+        option: "encrypted_message",
+        data: "encrypted_message\n"+encryptString(request.data, request.username)
+      });
       break;
     case "decrypt_message":
-      sendResponse(decryptString(request.data));
+      sendResponse({
+        option: "decrypted_message",
+        data: decryptString(request.data)
+      });
       break;
     case "add_user":
       users[request.username] = request.data;
       break;
-    case "set_key":
+    case "set_keys":
+      myInfo.publicKey = request.data.publicKey;
+      myInfo.privateKey = request.data.privateKey;
+      myInfo.passPhrase = request.data.passPhrase;
       break;
-    case "get_key":
+    case "get_keys":
+      sendResponse({
+        option: "keys",
+        data: JSON.stringify({
+          publicKey: myInfo.publicKey,
+          privateKey: myInfo.RSAKey,
+          passPhrase: myInfo.PassPhrase,
+        }),
+      });
       break;
     case "handle_string":
       handleString(request.data, request.username);

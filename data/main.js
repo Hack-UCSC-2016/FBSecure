@@ -1,48 +1,88 @@
 console.log("RUUUUN");
 
-function keyDown() {
-  console.log('Keydown');
-}
+var fburl = "facebook.com/";
 
-function run() {
-  console.log("run");
-  $('.fbDockWrapper .fbNub').each(function() {
-    var name = $(this).find('.name').text();
-    if(name.length === 0)
-      return;
-
-    var ta = $(this).find('textarea');
-    if($(this).find('textarea').length === 1) {
-      ta.hide();
-      var code = "var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');"+
+/*
+      var code =
+            "debugger;"+
+            "var username = '"+username+"';"+
+            "var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');"+
             "for(var i=0; i<nubs.length; i++) {"+
-            "var name = nubs[i].querySelector('div.name > span > span').textContent;"+
-            "if(name === '"+name+"') {"+
+            "if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}"+
+            "var testusername = nubs[i].querySelector('a.titlebarText.fixemoji').href;"+
+            "var fburl = 'facebook.com/';"+
+            "testusername = testusername.substr(testusername.indexOf(fburl)+fburl.length);"+
+            "console.log(testusername);"+
+            "if(testusername === username) {"+
             "var ta = nubs[i].querySelector('textarea:first-child');"+
+            "ta.addEventListener('customcole', function(e) {"+
+            "var f = new Event('keydown');"+
+            "f.charCode = 13;"+
+            "f.keyCode = 13;"+
+            "f.which = 13;"+
+            "this.dispatchEvent(f);"+
+            "console.log('CUSTOMCOLE #####################');"+
+            "console.log(e);"+
+            "}, false);"+
+            "console.log(ta);"+
             "var e = new Event('keydown');"+
+            "e.charCode = 13;"+
             "e.keyCode = 13;"+
+            "e.which = 13;"+
             "ta.dispatchEvent(e);"+
+            //"window.run_with(ta, ['legacy:control-textarea'], function() {TextAreaControl.getInstance(this)});"+
+            "var f = new Event('customcole');"+
+            "f.keyCode = 13;"+
+            "ta.dispatchEvent(f);"+
             "break;"+
             "}"+
-            "}";
+ "}";
+*/
 
-      var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
-        if(e.keyCode === 13) {
-          var str = newTa.val()+" asldkfjasdflk\n";
+function setUpNub(nub) {
+  console.log("run");
+  var name = nub.find('.name').text();
+  if(name.length === 0)
+    return;
+  var username = nub.find('a.titlebarText.fixemoji').attr('href');
+  username = username.substr(username.indexOf(fburl)+fburl.length);
+  var ta = nub.find('textarea');
+  if(nub.find('textarea').length === 1) {
+    ta.hide();
+
+    var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
+      if(e.keyCode === 13) {
+        var str = newTa.val()+" asldkfjasdflk\r\n"+String.fromCharCode(13);
+        chrome.runtime.sendMessage({option: "encrypt_message", data: {data: str, username: username}, function(crypt) {
           ta.val(str);
-          chrome.runtime.sendMessage({option: "run_code_in_window", data: code});
-          newTa.val("");
-        }
-      });
-      ta.parent().append(newTa);
-    }
-    
-    
-    var messages = $(this).find('div.conversation > div > div:last-child > div');
-    messages.each(function() {
-      console.log($(this).text());
+        }});
+        //$('body').append('<script type="text/javascript">'+code+'</script>');
+        newTa.val("");
+      }
     });
+    ta.parent().append(newTa);
+  }
+  
+  
+  
+  var messages = nub.find('div.conversation > div > div:last-child > div');
+  messages.each(function() {
+    //console.log($(this).text());
   });
 }
 
-setInterval(run, 5000);
+var observer = new MutationObserver(function(mutations) {
+  console.log(mutations);
+  mutations.forEach(function(mutation) {
+    for (var i = 0; i < mutation.addedNodes.length; i++)
+      var nub = $(mutation.addedNodes[i]);
+      if(nub && nub.hasClass('fbNub')) {
+        setUpNub(nub);
+      }
+  });
+});
+
+setTimeout(function() {
+  console.log($('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0));
+  observer.observe($('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0), { childList: true });
+}, 5000);
