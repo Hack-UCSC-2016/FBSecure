@@ -4,10 +4,13 @@ var myInfo = {};
 var keysStored = false;
 if (!keysStored){
   generateKeys();
+  myInfo.PassPhrase = myPassPhrase;
   myInfo.RSAKey = myRSAkey;
   myInfo.publicKey = myPublicKeyString;
   keysStored = true;
+  console.log("Your passphrase is: "+myInfo.PassPhrase);
   console.log("Your public key is: "+myInfo.publicKey);
+  console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
 }
 
 chrome.storage.onChanged.addListener(function(changes, namespace){
