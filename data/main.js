@@ -1,9 +1,12 @@
 console.log("RUUUUN");
 function run() {
   console.log("run");
-  $('#u_0_1m > .fbNub').each(function() {
-    console.log($(this).find('.name').text());
+  $('.fbDockWrapper .fbNub').each(function() {
+    var name = $(this).find('.name').text();
+    if(name.length === 0)
+      return;
+    console.log(name);
   });
 }
 
-setInterval(run, 10000);
+setInterval(run, 5000);
