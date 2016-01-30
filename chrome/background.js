@@ -58,5 +58,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     case "decrypt_message":
       sendResponse(decryptString(request.data));
       break;
+    case "add_user":
+      users[request.username] = request.data;
+      break;
   }
 });
