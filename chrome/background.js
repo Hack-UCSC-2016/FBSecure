@@ -33,7 +33,7 @@ function encryptString(string, username){
     var encryptedResult = cryptico.encrypt(string, key);
     return encryptedResult.cipher;
   }
-  return "";
+  return "Couldn't find recipiant key";
 }
 
 function decryptString(string){
