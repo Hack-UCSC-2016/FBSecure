@@ -90,7 +90,13 @@ function setUpNub(nub) {
             var elem = $(this);
             console.log('Received message');
             var me = elem.parent().parent().parent().parent().parent().parent().data('tooltip-position') === 'right';
-            console.log(me);
+            if(me) {
+              var header = elem.text().split('\n')[0];
+              if(header === "my_key"){
+                elem.text('[Key sent]');
+              }
+              return;
+            }
             chrome.runtime.sendMessage({option: "handle_string", data: elem.text(), username: username}, function(result) {
               elem.text(result.data);
             });
