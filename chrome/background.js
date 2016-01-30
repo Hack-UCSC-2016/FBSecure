@@ -103,10 +103,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       users[request.username] = request.data;
       break;
     case "set_keys":
-      myInfo.publicKey = request.data.publicKey;
-      myInfo.privateKey = request.data.privateKey;
-      myInfo.passPhrase = request.data.passPhrase;
-      users = request.data.buddies;
+      var data = JSON.parse(request.data);
+      myInfo.publicKey = data.publicKey;
+      myInfo.privateKey = data.privateKey;
+      myInfo.passPhrase = data.passPhrase;
+      users = data.buddies;
       break;
     case "get_keys":
       sendResponse({
