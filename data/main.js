@@ -39,6 +39,8 @@ var fburl = "facebook.com/";
  "}";
 */
 
+var lastSent = "";
+
 function setUpNub(nub) {
   console.log("run");
   var name = nub.find('.name').text();
@@ -53,6 +55,7 @@ function setUpNub(nub) {
     var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
       if(e.keyCode === 13) {
         var str = newTa.val();
+        lastSent = str;
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
           ta.val(response.data);
         });
@@ -94,6 +97,9 @@ function setUpNub(nub) {
               var header = elem.text().split('\n')[0];
               if(header === "my_key"){
                 elem.text('[Key sent]');
+              } else if (header === "encrypted_message" && lastSent.length > 0) {
+                elem.text(lastSent);
+                lastSent = "";
               }
               return;
             }
