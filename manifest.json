@@ -12,7 +12,8 @@
           }
     ],
     "browser_action": {
-        "default_icon": "data/icon-16.png"
+        "default_icon": "data/icon-16.png",
+        "default_popup": "data/popup.html"
     },
     "background": {
         "scripts": ["chrome/background.js"]
