@@ -1,16 +1,21 @@
 var users = {};
 var myInfo = {};
 
+myInfo.passPhrase = myPassPhrase;
+myInfo.RSAKey = myRSAkey;
+myInfo.publicKey = myPublicKeyString;
+
 chrome.storage.onChanged.addListener(function(changes, namespace){
-  
+  var i = 1;
 });
 
 function saveUser(name, key){
+  
 }
 
 function encryptString(string, username){
-  var user = users[username];
-  if (user){
+  var key = users[username];
+  if (key){
     
   }
 }
