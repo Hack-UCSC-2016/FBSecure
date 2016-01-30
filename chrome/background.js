@@ -1,7 +1,6 @@
 var users = {};
 var myInfo = {};
 
-myInfo.passPhrase = myPassPhrase;
 myInfo.RSAKey = myRSAkey;
 myInfo.publicKey = myPublicKeyString;
 
@@ -16,12 +15,14 @@ function saveUser(name, key){
 function encryptString(string, username){
   var key = users[username];
   if (key){
-    
+    var encryptedResult = cryptico.encrypt(string, key);
   }
+  return encryptedResult.cipher;
 }
 
-function decryptString(string, username){
-  
+function decryptString(string){
+  var decryptedResult = cryptico.decrypt(string, myRSAkey);
+  return decryptedResult.plaintext;
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {
