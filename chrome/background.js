@@ -52,7 +52,7 @@ function handleString(string, username){
       return decryptString(message);
       break;
     case "my_key": //store my key with my username
-      users[username] = message;
+    users[username] = message.trim();
       return "[key received]";
       break;
     default:
