@@ -74,6 +74,9 @@ function handleString(string, username){
       //return {option: "send", data: "my_key\n"+myInfo.publicKey};
       break;
     case "encrypted_message": //here's a message from me
+      if (!users[username]){
+        return string;
+      }
       return decryptString(message);
       break;
     case "my_key": //store my key with my username
@@ -155,8 +158,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       });
       break;
     case "reset":
+      myInfo = {}
       users = {};
+      myInfo = {};
       generateKeys();
+      myInfo.PassPhrase = myPassPhrase;
+      myInfo.RSAKey = myRSAkey;
+      myInfo.publicKey = myPublicKeyString;
       saveState();
       break;
   }
