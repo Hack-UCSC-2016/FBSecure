@@ -133,6 +133,10 @@ $(document).ready(function() {
     if(elem) {
       clearInterval(interval);
       observer.observe($('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0), { childList: true });
+      var myProfileLink = $('#blueBarDOMInspector ul li:first-child a');
+      var myusername = myProfileLink.attr('href');
+      myusername = myusername.substr(username.indexOf(fburl)+fburl.length);
+      chrome.runtime.sendMessage({option: "name", username: myusername});
     }
   }, 50);
 });
