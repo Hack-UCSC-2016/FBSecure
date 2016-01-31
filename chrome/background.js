@@ -132,6 +132,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       users[request.username] = request.data.trim();
       saveState();
       break;
+    case "import_user":
+      var data = JSON.parse(request.data);
+      users[request.username] = request.data.trim();
+      saveState();
+      break;
     case "set_keys":
       var data = JSON.parse(request.data);
       myInfo.publicKey = data.publicKey;
