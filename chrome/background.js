@@ -153,5 +153,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
         data: handleString(request.data, request.username),
       });
       break;
+    case "reset":
+      users = {};
+      generateKeys();
+      saveState();
+      break;
   }
 });
