@@ -3,51 +3,53 @@ var myInfo = {};
 
 var saved = false;
 //have we saved a list of buddies before?
-chrome.storage.sync.get("saved", function(items){
-  if (items["saved"] === true)
+chrome.storage.local.get(["saved"], function(items){
+  if (items["saved"] == true){
     saved = true;
+  }
+  if (!saved){
+    console.log("Generating keys cuz you haven't used this before:");
+    //generate keys because we haven't saved things yet
+    generateKeys();
+    myInfo.PassPhrase = myPassPhrase;
+    myInfo.RSAKey = myRSAkey;
+    myInfo.publicKey = myPublicKeyString;
+    saveState();
+    console.log("Keys: "+saved);
+    console.log("Your passphrase is: "+myInfo.PassPhrase);
+    console.log("Your public key is: "+myInfo.publicKey);
+    console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
+  } else {
+    //load it
+    loadState();
+  }
 });
 
 function loadState(){
-  chrome.storage.sync.get(["data"], function(items){
+  chrome.storage.local.get(["data"], function(items){
     var data = items["data"];
     data = JSON.parse(data);
     users = data.users;
     myInfo = data.info;
     console.log("Loaded data");
+    console.log("Your passphrase is: "+myInfo.PassPhrase);
+    console.log("Your public key is: "+myInfo.publicKey);
+    console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
   });
 }
 
 function saveState(){
-  chrome.storage.sync.set({"data": JSON.stringify({
+  chrome.storage.local.set({"data": JSON.stringify({
     users: users,
     info: myInfo,
   })}, function(){
     console.log("Userdata stored.");
   });
-  chrome.storage.sync.set({"saved": true}, function(){
+  chrome.storage.local.set({"saved": true}, function(){
     saved = true;
     console.log("Data stored");
   });
 }
-
-if (!saved){
-  console.log("Generating keys cuz you haven't used this before:");
-  //generate keys because we haven't saved things yet
-  generateKeys();
-  myInfo.PassPhrase = myPassPhrase;
-  myInfo.RSAKey = myRSAkey;
-  myInfo.publicKey = myPublicKeyString;
-  saveState();
-  console.log("Keys: "+saved);
-} else {
-  //load it
-  loadState();
-}
-
-console.log("Your passphrase is: "+myInfo.PassPhrase);
-console.log("Your public key is: "+myInfo.publicKey);
-console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
 
 function encryptString(string, username){
   var key = users[username];
@@ -59,7 +61,7 @@ function encryptString(string, username){
 }
 
 function decryptString(string){
-  var decryptedResult = cryptico.decrypt(string, myRSAkey);
+  var decryptedResult = cryptico.decrypt(string, myInfo.RSAKey);
   return decryptedResult.plaintext;
 }
 
