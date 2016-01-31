@@ -56,9 +56,9 @@ function encryptString(string, username){
   var key = users[username];
   if (key){
     var encryptedResult = cryptico.encrypt(string, key);
-    return encryptedResult.cipher;
+    return "encrypted_message\n"+encryptedResult.cipher;
   }
-  return "Couldn't find recipiant key";
+  return string;
 }
 
 function decryptString(string){
@@ -119,7 +119,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     case "encrypt_message":
       sendResponse({
         option: "encrypted_message",
-        data: "encrypted_message\n"+encryptString(request.data, request.username)
+        data: encryptString(request.data, request.username)
       });
       break;
     case "decrypt_message":
