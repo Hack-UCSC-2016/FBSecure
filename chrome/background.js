@@ -1,5 +1,5 @@
 var users = {};
-var myInfo = {};
+var myInfo = {name: "THIS_SHOULDN'T APPEAR EVER"};
 
 var saved = false;
 //have we saved a list of buddies before?
@@ -168,7 +168,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       saveState();
       break;
     case "name":
-      
+      myInfo.name = request.username;
+      saveState();
       break;
   }
 });
