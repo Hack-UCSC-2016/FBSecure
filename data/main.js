@@ -76,6 +76,7 @@ function setUpNub(nub) {
     var buttonspan = $('<span class="_6gd"></span>');
     buttonspan.append(keybutton);
     buttonslot.append(buttonspan);
+    keybutton.attr('style', 'background-position: -153px -421px;');
   }
   
   
