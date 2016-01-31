@@ -44,35 +44,15 @@ function setUpNub(nub) {
 
     var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
       if(e.keyCode === 13) {
-        var str = newTa.val();
+        var str = newTa.val().trim();
+        newTa.val("");
+        if(str.length === 0) return;
         lastSent = str;
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
           ta.val(response.data);
         });
-        /*
-        var code =
-            "debugger;"+
-            "var username = '"+username+"';"+
-            "var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');"+
-            "for(var i=0; i<nubs.length; i++) {"+
-             "if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}"+
-              "var testusername = nubs[i].querySelector('a.titlebarText.fixemoji').href;"+
-              "var fburl = 'facebook.com/';"+
-              "testusername = testusername.substr(testusername.indexOf(fburl)+fburl.length);"+
-              "console.log(testusername);"+
-              "if(testusername === username) {"+
-                "var ta = nubs[i].querySelector('textarea:first-child');"+
-              "}"+
-            "}"+
-            "console.log('pls help me...');"+
-            "var e = new Event('keydown');"+
-            "e.charcode = 13;"+
-            ""+
-            "";
-        */
-        var code = "(function(){console.log('start');var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;console.log(username);var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
+        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
         chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
-        newTa.val("");
       }
     });
     ta.parent().append(newTa);
@@ -83,7 +63,7 @@ function setUpNub(nub) {
       chrome.runtime.sendMessage({option: "get_keys"}, function(input) {
         var msg = "my_key\n"+JSON.parse(input.data).publicKey;
         ta.val(msg);
-        var code = "(function(){console.log('start');var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;console.log(username);var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
+        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
         chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
       });
     });
@@ -113,9 +93,20 @@ function setUpNub(nub) {
               }
               return;
             }
-            chrome.runtime.sendMessage({option: "handle_string", data: elem.text(), username: username}, function(result) {
-              elem.text(result.data);
-            });
+            if(elem.text().split('\n')[0] === 'my_key') {
+              var button = $('<button>Click here to accept key</button>');
+              var key = elem.text().split('\n')[1];
+              button.click(function() {
+                chrome.runtime.sendMessage({option: "add_user", data: key, username: username});
+                elem.empty().text('[Added Key]');
+              });
+              elem.empty().append(button);
+            } else {
+              chrome.runtime.sendMessage({option: "handle_string", data: elem.text(), username: username},
+                                         function(result) {
+                elem.text(result.data);
+              });
+            }
           }
         });
       }
