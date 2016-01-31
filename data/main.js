@@ -2,19 +2,8 @@ console.log("RUUUUN");
 
 var fburl = "facebook.com/";
 
+
 /*
-      var code =
-            "debugger;"+
-            "var username = '"+username+"';"+
-            "var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');"+
-            "for(var i=0; i<nubs.length; i++) {"+
-            "if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}"+
-            "var testusername = nubs[i].querySelector('a.titlebarText.fixemoji').href;"+
-            "var fburl = 'facebook.com/';"+
-            "testusername = testusername.substr(testusername.indexOf(fburl)+fburl.length);"+
-            "console.log(testusername);"+
-            "if(testusername === username) {"+
-            "var ta = nubs[i].querySelector('textarea:first-child');"+
             "ta.addEventListener('customcole', function(e) {"+
             "var f = new Event('keydown');"+
             "f.charCode = 13;"+
@@ -39,6 +28,7 @@ var fburl = "facebook.com/";
  "}";
 */
 
+
 var lastSent = "";
 
 function setUpNub(nub) {
@@ -59,7 +49,33 @@ function setUpNub(nub) {
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
           ta.val(response.data);
         });
+        /*
+        var code =
+            "debugger;"+
+            "var username = '"+username+"';"+
+            "var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');"+
+            "for(var i=0; i<nubs.length; i++) {"+
+             "if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}"+
+              "var testusername = nubs[i].querySelector('a.titlebarText.fixemoji').href;"+
+              "var fburl = 'facebook.com/';"+
+              "testusername = testusername.substr(testusername.indexOf(fburl)+fburl.length);"+
+              "console.log(testusername);"+
+              "if(testusername === username) {"+
+                "var ta = nubs[i].querySelector('textarea:first-child');"+
+              "}"+
+            "}"+
+            "console.log('pls help me...');"+
+            "var e = new Event('keydown');"+
+            "e.charcode = 13;"+
+            ""+
+            "";
+        */
+        var code = "(function(){console.log('start');var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;console.log(username);var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
         //$('body').append('<script type="text/javascript">'+code+'</script>');
+        //chrome.tabs.executeScript(null, {
+        //  code: code,
+        //});
+        chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
         newTa.val("");
       }
     });
