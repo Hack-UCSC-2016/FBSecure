@@ -53,6 +53,14 @@ $(document).ready(function(){
     });
   });
 
+  $("#generate").click(function() {
+    chrome.runtime.sendMessage({option: "reset"}, function(response){});
+
+    $("#top").css("color", "red");
+    $("#top").html("<p id=output>Your credentials have been changed</p>");
+    $("#top").show();
+  });
+
   $("#import").click(function(){
     $("#mid").hide();
 
