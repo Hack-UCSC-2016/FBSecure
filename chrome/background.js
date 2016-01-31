@@ -41,7 +41,7 @@ function loadState(){
 function saveState(){
   chrome.storage.local.set({"data": JSON.stringify({
     users: users,
-    info: myInfo,
+    info: myInfo
   })}, function(){
     console.log("Userdata stored.");
   });
