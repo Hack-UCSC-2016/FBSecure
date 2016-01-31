@@ -129,7 +129,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       });
       break;
     case "add_user":
-      users[request.username] = request.data;
+      users[request.username] = request.data.trim();
       saveState();
       break;
     case "set_keys":
@@ -166,6 +166,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       myInfo.RSAKey = myRSAkey;
       myInfo.publicKey = myPublicKeyString;
       saveState();
+      break;
+    case "name":
+      
       break;
   }
 });
