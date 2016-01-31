@@ -1,69 +1,37 @@
 $(document).ready(function(){
-  $("#lock").hide();
-  $("#unlock").hide();
+  $("#warning").hide();
 
-  var password = null;
+  $("#reset").click(function() {
+    $("#top").hide();
+    $("#bot").hide();
 
-  $("#password").click(function(){
-    $("#lock").hide();
     $("#mid").hide();
+    $("#warning").show();
 
-    $("#top").html("<p id=output>Set a new password</p>");
-    $("#top").show();
+    $("#yes").click(function() {
+      $("#top").css("color", "red");
+      $("#top").html("<p id=output>Your credentials have been changed</p>");
 
-    $("#bot").html("<input type=\"password\" id=\"entry\">");
-    $("#entry").keyup(function(e){
-      if (e.keyCode == 13){
-        password = $("#entry").val();
-        chrome.runtime.sendMessage({option: "set_password", data: $("#entry").val()}, function(response){
-          console.log("response: "+response);
-        });
+      chrome.runtime.sendMessage({option: "reset"}, function(response){});
 
-        $("#output").hide();
-        $("#entry").hide();
-        $("#mid").show();
-        $("#lock").show();
-      }
+      $("#mid").show();
+      $("#warning").hide();
     });
-  });
 
-  $("#lock").click(function() {
-    $("#mid").hide();
-    $("#lock").hide();
-    $("#unlock").show();
-  });
-
-  $("#unlock").click(function() {
-    $("#top").html("<p id=output>Enter your password to unlock</p><input type=\"password\" id=unlockpw>");
-    $("#top").show();
-    $("#output").show();
-
-    $("#unlockpw").keyup(function(e){
-      if (e.keyCode == 13){
-        if ($("#unlockpw").val() == password){
-          $("#top").hide();
-          $("#mid").show();
-          $("#lock").show();
-          $("#unlock").hide();
-        } else {
-          $("#output").css("color", "red");
-          $("#output").html("<p>PASSWORD INCORRECT</p>");
-        }
-      }
+    $("#no").click(function() {
+      $("#mid").show()
+      $("#warning").hide();
     });
-  });
 
-  $("#generate").click(function() {
-    chrome.runtime.sendMessage({option: "reset"}, function(response){});
-
-    $("#top").css("color", "red");
-    $("#top").html("<p id=output>Your credentials have been changed</p>");
     $("#top").show();
   });
 
   $("#import").click(function(){
     $("#mid").hide();
+    $("#bot").hide();
 
+    $("#top").show();
+    $("#top").css("color", "black");
     $("#top").html("<p id=output>Enter your credentials to load keys</p><input type=\"password\" id=credentials>");
 
     $("#credentials").keyup(function(e){
@@ -79,24 +47,31 @@ $(document).ready(function(){
   $("#export").click(function(){
     $("#mid").hide();
 
+    $("#top").show();
     $("#top").css("color", "red");
     $("#top").html("<p id=output>Copy and paste this in a secure location.</p>");
-    $("#top").show();
-    $("#output").show();
 
     chrome.runtime.sendMessage({option: "get_keys"}, function(response){
+      $("#bot").show();
+      $("#bot").css("color", "black");
       $("#bot").html("<p id=entry>"+response.data+"</p>");
       response.data;
     });
+
+    $("#top").hide();
+    $("#bot").hide();
   });
 
   $("#friends").click(function(){
+    $("#top").hide();
     $("#mid").hide();
 
     chrome.runtime.sendMessage({option: "get_keys"}, function(response){
       var newData = JSON.parse(response.data);
       var pals = Object.keys(newData.buddies);
 
+      $("#bot").show();
+      $("#bot").css("color", "black");
       for (i=0;i<pals.length;i++) {
         $("#bot").append(pals[i] + "<br><br>");
       }
