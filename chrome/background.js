@@ -1,31 +1,53 @@
 var users = {};
 var myInfo = {};
 
-var keysStored = false;
-chrome.storage.sync.get("keysStored", function(items){
-  if (items["keysStored"] === true)
-    keysStored = true;
+var saved = false;
+//have we saved a list of buddies before?
+chrome.storage.sync.get("saved", function(items){
+  if (items["saved"] === true)
+    saved = true;
 });
 
-console.log("Keyspre: "+keysStored);
-if (!keysStored){
+function loadState(){
+  chrome.storage.sync.get(["data"], function(items){
+    var data = items["data"];
+    data = JSON.parse(data);
+    users = data.users;
+    myInfo = data.info;
+    console.log("Loaded data");
+  });
+}
+
+function saveState(){
+  chrome.storage.sync.set({"data": JSON.stringify({
+    users: users,
+    info: myInfo,
+  })}, function(){
+    console.log("Userdata stored.");
+  });
+  chrome.storage.sync.set({"saved": true}, function(){
+    saved = true;
+    console.log("Data stored");
+  });
+}
+
+if (!saved){
+  console.log("Generating keys cuz you haven't used this before:");
+  //generate keys because we haven't saved things yet
   generateKeys();
   myInfo.PassPhrase = myPassPhrase;
   myInfo.RSAKey = myRSAkey;
   myInfo.publicKey = myPublicKeyString;
-  keysStored = true;
-  console.log("Your passphrase is: "+myInfo.PassPhrase);
-  console.log("Your public key is: "+myInfo.publicKey);
-  console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
-  chrome.storage.sync.set({"keysStored": true}, function(){
-    console.log("Keys stored");
-  });
-  console.log("Keys: "+keysStored);
+  saveState();
+  console.log("Keys: "+saved);
+} else {
+  //load it
+  loadState();
 }
 
-function saveUser(name, key){
-  
-}
+console.log("Your passphrase is: "+myInfo.PassPhrase);
+console.log("Your public key is: "+myInfo.publicKey);
+console.log("Your private key is: "+JSON.stringify(myInfo.RSAKey));
 
 function encryptString(string, username){
   var key = users[username];
@@ -53,6 +75,7 @@ function handleString(string, username){
       break;
     case "my_key": //store my key with my username
       users[username] = message;
+      saveState();
       return "[key received]";
       break;
     default:
@@ -101,6 +124,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       break;
     case "add_user":
       users[request.username] = request.data;
+      saveState();
       break;
     case "set_keys":
       var data = JSON.parse(request.data);
@@ -108,6 +132,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       myInfo.privateKey = data.privateKey;
       myInfo.passPhrase = data.passPhrase;
       users = data.buddies;
+      saveState();
       break;
     case "get_keys":
       sendResponse({
