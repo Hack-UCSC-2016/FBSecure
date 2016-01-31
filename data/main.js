@@ -71,10 +71,6 @@ function setUpNub(nub) {
             "";
         */
         var code = "(function(){console.log('start');var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;console.log(username);var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
-        //$('body').append('<script type="text/javascript">'+code+'</script>');
-        //chrome.tabs.executeScript(null, {
-        //  code: code,
-        //});
         chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
         newTa.val("");
       }
@@ -87,6 +83,8 @@ function setUpNub(nub) {
       chrome.runtime.sendMessage({option: "get_keys"}, function(input) {
         var msg = "my_key\n"+JSON.parse(input.data).publicKey;
         ta.val(msg);
+        var code = "(function(){console.log('start');var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {console.log(nubs[i]); continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;console.log(username);var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
+        chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
       });
     });
     var buttonspan = $('<span class="_6gd"></span>');
