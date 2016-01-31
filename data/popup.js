@@ -67,7 +67,6 @@ $(document).ready(function(){
     $("#bot").hide();
   });
 
-/*
   $("#add").click(function(){
     $("#mid").hide();
     $("#bot").hide();
@@ -78,14 +77,14 @@ $(document).ready(function(){
 
     $("#userkeypair").keyup(function(e){
       if (e.keyCode == 13){
-        chrome.runtime.sendMessage({option: "add_user", data: $("#userkeypair").val()}, function(response){});
+        chrome.runtime.sendMessage({option: "import_user", data: $("#userkeypair").val()}, function(response){});
 
         $("#top").hide();
         $("#mid").show();
       }
     });
   });
-*/
+
   $("#copy").click(function(){
     $("#mid").show();
 
@@ -95,8 +94,8 @@ $(document).ready(function(){
       var myName = data.name;
       var publicKey = data.publicKey;
 
-      var keyString = "{\"" + myName +"\": \"" + publicKey + "\"}";
-      copyToClipboard(keyString)
+      var keyString = JSON.stringify({username: myName, data: publicKey});
+      copyToClipboard(keyString);
     });
 
     $("#top").css("color", "red");
