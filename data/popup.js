@@ -54,6 +54,19 @@ $(document).ready(function(){
     });
   });
 
+  $("#export").click(function(){
+    $("#mid").show();
+
+    chrome.runtime.sendMessage({option: "get_keys"}, function(response){
+      copyToClipboard(response.data);
+    });
+
+    $("#top").css("color", "red");
+    $("#top").html("<p id=output>Your settings are now copied to your clipboard.  Paste it to a secure location.</p>");
+
+    $("#bot").hide();
+  });
+
 /*
   $("#add").click(function(){
     $("#mid").hide();
@@ -72,36 +85,24 @@ $(document).ready(function(){
       }
     });
   });
-
+*/
   $("#copy").click(function(){
     $("#mid").show();
 
     chrome.runtime.sendMessage({option: "get_keys"}, function(response){
       var data = JSON.parse(response.data);
+
+      var myName = data.name;
       var publicKey = data.publicKey;
 
-      copyToClipboard(publicKey);
+      var keyString = "{\"" + myName +"\": \"" + publicKey + "\"}";
+      copyToClipboard(keyString)
     });
-
 
     $("#top").css("color", "red");
     $("#top").html("<p id=output>Your username and public key is now copied to your clipboard.  Share it with your friends.</p>");
 
     $("#top").show();
-    $("#bot").hide();
-  });
-*/
-
-  $("#export").click(function(){
-    $("#mid").show();
-
-    chrome.runtime.sendMessage({option: "get_keys"}, function(response){
-      copyToClipboard(response.data);
-    });
-
-    $("#top").css("color", "red");
-    $("#top").html("<p id=output>Your settings are now copied to your clipboard.  Paste it to a secure location.</p>");
-
     $("#bot").hide();
   });
 

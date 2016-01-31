@@ -1,5 +1,5 @@
 var users = {};
-var myInfo = {name: "THIS_SHOULDN'T APPEAR EVER"};
+var myInfo = {name: "THIS_SHOULDN'T_APPEAR_EVER"};
 
 var saved = false;
 //have we saved a list of buddies before?
