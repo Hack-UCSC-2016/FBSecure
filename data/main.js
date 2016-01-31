@@ -126,7 +126,13 @@ var observer = new MutationObserver(function(mutations) {
   });
 });
 
-setTimeout(function() {
-  console.log($('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0));
-  observer.observe($('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0), { childList: true });
-}, 5000);
+$(document).ready(function() {
+  var elem = undefined;
+  var interval = setInterval(function() {
+    elem = $('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0);
+    if(elem) {
+      clearInterval(interval);
+      observer.observe($('#ChatTabsPagelet > div > div > div.fbNubGroup').get(0), { childList: true });
+    }
+  }, 50);
+});
