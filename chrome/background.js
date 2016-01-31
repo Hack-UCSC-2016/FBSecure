@@ -31,6 +31,7 @@ function loadState(){
     data = JSON.parse(data);
     users = data.users;
     myInfo = data.info;
+    myInfo.RSAKey = makeRSAKey(myInfo.PassPhrase);
     console.log("Loaded data");
     console.log("Your passphrase is: "+myInfo.PassPhrase);
     console.log("Your public key is: "+myInfo.publicKey);
@@ -81,7 +82,7 @@ function handleString(string, username){
       return "[key received]";
       break;
     default:
-      return string;
+      return "unencrypted\n"+string;
       break;
   }
   return "";
@@ -152,6 +153,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
         option: "handle_result",
         data: handleString(request.data, request.username),
       });
+      break;
+    case "reset":
+      users = {};
+      generateKeys();
+      saveState();
       break;
   }
 });
