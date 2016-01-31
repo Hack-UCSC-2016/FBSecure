@@ -85,7 +85,7 @@ function handleString(string, username){
       return "[key received]";
       break;
     default:
-      return "unencrypted\n"+string;
+      return "[unencrypted]\n"+string;
       break;
   }
   return "";
