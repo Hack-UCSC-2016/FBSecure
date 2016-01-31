@@ -137,6 +137,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       myInfo.publicKey = data.publicKey;
       myInfo.privateKey = data.privateKey;
       myInfo.passPhrase = data.passPhrase;
+      myInfo.name = data.name;
       users = data.buddies;
       saveState();
       break;
@@ -147,6 +148,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
           publicKey: myInfo.publicKey,
           privateKey: myInfo.RSAKey,
           passPhrase: myInfo.PassPhrase,
+          name: myInfo.name,
           buddies: users,
         }),
       });
