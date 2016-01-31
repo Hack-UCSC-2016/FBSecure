@@ -93,9 +93,20 @@ function setUpNub(nub) {
               }
               return;
             }
-            chrome.runtime.sendMessage({option: "handle_string", data: elem.text(), username: username}, function(result) {
-              elem.text(result.data);
-            });
+            if(elem.text().split('\n')[0] === 'my_key') {
+              var button = $('<button>Click here to accept key</button>');
+              var key = elem.text().split('\n')[1];
+              button.click(function() {
+                chrome.runtime.sendMessage({option: "add_user", data: key, username: username});
+                elem.empty().text('[Added Key]');
+              });
+              elem.empty().append(button);
+            } else {
+              chrome.runtime.sendMessage({option: "handle_string", data: elem.text(), username: username},
+                                         function(result) {
+                elem.text(result.data);
+              });
+            }
           }
         });
       }
