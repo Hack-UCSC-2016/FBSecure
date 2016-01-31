@@ -70,28 +70,23 @@ function setUpNub(nub) {
     keybutton.click(function() {
       chrome.runtime.sendMessage({option: "get_keys"}, function(input) {
         var msg = "my_key\n"+JSON.parse(input.data).publicKey;
-        console.log(msg);
         ta.val(msg);
       });
     });
     var buttonspan = $('<span class="_6gd"></span>');
     buttonspan.append(keybutton);
     buttonslot.append(buttonspan);
-    console.log(buttonslot.length);
-    console.log(ta.parent().parent().get(0));
   }
   
   
   
   var messages = nub.find('div.conversation > div > div:last-child');
   var msgObs = new MutationObserver(function(mutations) {
-    console.log(mutations);
     mutations.forEach(function(mutation) {
       for(var i=0; i<mutation.addedNodes.length; i++) {
         $(mutation.addedNodes[i]).find('span').each(function() {
           if(!$(this).attr('class')) {
             var elem = $(this);
-            console.log('Received message');
             var me = elem.parent().parent().parent().parent().parent().parent().data('tooltip-position') === 'right';
             if(me) {
               var header = elem.text().split('\n')[0];
@@ -115,7 +110,6 @@ function setUpNub(nub) {
 }
 
 var observer = new MutationObserver(function(mutations) {
-  console.log(mutations);
   mutations.forEach(function(mutation) {
     for (var i = 0; i < mutation.addedNodes.length; i++) {
       var nub = $(mutation.addedNodes[i]);
