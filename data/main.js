@@ -38,20 +38,35 @@ function setUpNub(nub) {
     return;
   var username = nub.find('a.titlebarText.fixemoji').attr('href');
   username = username.substr(username.indexOf(fburl)+fburl.length);
-  var ta = nub.find('textarea');
-  if(nub.find('textarea').length === 1) {
+  var ta = nub.find('.fbNubFlyoutFooter > div:not(:last-child)');
+  console.log(ta.get(0));
+  if(ta.length === 1) {
+    var newTa = ta.clone();
     ta.hide();
-
-    var newTa = $('<textarea title="Type an encrypted message..." placeholder="Type an encrypted message..." style="height: 14px;"></textarea>').attr('class', ta.attr('class')).keyup(function(e) {
+    newTa.children('div').children('div').removeAttr('data-reactroot');
+    newTa.find('div[role="textbox"]').attr('title', 'Type an encrypted message...');
+    newTa.find('div:contains("Type a message..."):not(:has(*))').text('Type an encrypted message...');
+    var allElems = newTa.find('*');
+    allElems.removeAttr('data-contents');
+    allElems.removeAttr('data-block');
+    allElems.removeAttr('data-offset-key');
+    allElems.removeAttr('data-ft');
+    allElems.removeAttr('data-ft');
+    var spanText = newTa.find('div[role="textbox"]');
+    spanText.keyup(function(e) {
+      console.log("keyup!");
       if(e.keyCode === 13) {
-        var str = newTa.val().trim();
-        newTa.val("");
+        var str = newTa.find('div[role="textbox"]').text().trim();
+        spanText.html("");
+        console.log(str);
         if(str.length === 0) return;
         lastSent = str;
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
-          ta.val(response.data);
+          console.log(response.data);
+          console.log(ta.find('div[role="textbox"]').get(0));
+          ta.find('div[role="textbox"]').text(response.data);
         });
-        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
+        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
         chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
       }
     });
