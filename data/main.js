@@ -28,6 +28,26 @@ var fburl = "facebook.com/";
  "}";
 */
 
+function pressEnter() {
+  var code = "(function(){"+
+        "var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');"+
+        "for(var i=0; i<nubs.length; i++) {"+
+        "if(nubs[i].querySelectorAll('.name').length === 0) {continue;}"+
+        "var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;"+
+        "var fburl = 'facebook.com/';"+
+        "username = username.substr(username.indexOf(fburl)+fburl.length);"+
+        "if(true || username === 'RaisingHearts') {"+
+        "console.log('got here');"+
+        "var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"] *[data-text=\"true\"]');"+
+        "console.log(ta);"+
+        "var e = new Event('keydown');"+
+        "e.keyCode = 13;"+
+        "ta.dispatchEvent(e);"+
+        "}"+
+        "}"+
+        "})();";
+  chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
+}
 
 var lastSent = "";
 
@@ -42,7 +62,7 @@ function setUpNub(nub) {
   console.log(ta.get(0));
   if(ta.length === 1) {
     var newTa = ta.clone();
-    ta.hide();
+    //ta.hide();
     newTa.children('div').children('div').removeAttr('data-reactroot');
     newTa.find('div[role="textbox"]').attr('title', 'Type an encrypted message...');
     newTa.find('div:contains("Type a message..."):not(:has(*))').text('Type an encrypted message...');
@@ -64,9 +84,15 @@ function setUpNub(nub) {
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
           console.log(response.data);
           console.log(ta.find('div[role="textbox"]').get(0));
-          ta.find('div[role="textbox"]').text(response.data);
+          var outerspan = ta.find('div[role="textbox"] span:has(*)');
+          if(outerspan.find('br[data-text="true"]').length > 0) {
+            outerspan.find('br[data-text="true"]').replaceWith(function() {
+              return $('<span data-text="true"></span>');
+            });
+          }
+          outerspan.find('span[data-text="true"]').text(str);
         });
-        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
+        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"] *[data-text=\"true\"]');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
         chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
       }
     });
