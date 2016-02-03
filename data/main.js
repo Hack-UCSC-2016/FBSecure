@@ -38,11 +38,17 @@ function pressEnter() {
         "username = username.substr(username.indexOf(fburl)+fburl.length);"+
         "if(true || username === 'RaisingHearts') {"+
         "console.log('got here');"+
-        "var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"] *[data-text=\"true\"]');"+
+        "var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"]');"+
         "console.log(ta);"+
         "var e = new Event('keydown');"+
-        "e.keyCode = 13;"+
-        "ta.dispatchEvent(e);"+
+        "e.keyCode = 66;"+
+        "e.bubbles = true;"+
+        "console.log(e);"+
+        "var descendents = ta.getElementsByTagName('*');"+
+        "for(var i=0; i<descendents.length; i++) {"+
+        "console.log(descendents[i]);"+
+        "descendents[i].dispatchEvent(e);"+
+        "}"+
         "}"+
         "}"+
         "})();";
@@ -91,6 +97,9 @@ function setUpNub(nub) {
             });
           }
           outerspan.find('span[data-text="true"]').text(str);
+          outerspan.find('span[data-text="true"]').focus();
+          chrome.runtime.sendMessage({option: "press_enter"});
+          pressEnter();
         });
         var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"] *[data-text=\"true\"]');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
         chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
@@ -98,7 +107,7 @@ function setUpNub(nub) {
     });
     ta.parent().append(newTa);
 
-    var buttonslot = ta.parent().parent().children('div:last-child');
+    var buttonslot = ta.parent().children('div:not(:last-child):not(:first-child)');
     var keybutton = $('<a class="_6gb _6gf" role="button" title="Send your public key" tabindex="0"></a>');
     keybutton.click(function() {
       chrome.runtime.sendMessage({option: "get_keys"}, function(input) {

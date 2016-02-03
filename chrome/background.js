@@ -116,6 +116,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
                                                 '(document.head||document.documentElement).appendChild(s);'
                                                });
       break;
+    case "press_enter":
+      chrome.input.ime.commitText({contextID: 0, text:"a\n"});
+    break;
     case "encrypt_message":
       sendResponse({
         option: "encrypted_message",
