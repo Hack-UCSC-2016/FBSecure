@@ -73,13 +73,13 @@ function handleString(string, username){
     case "send_key": //send your key to me
       //return {option: "send", data: "my_key\n"+myInfo.publicKey};
       break;
-    case "encrypted_message": //here's a message from me
+    case " encrypted_message": //here's a message from me
     /*if (!users[username]){
         return string;
       }*/ //Don't use this, we dont' actually need their pub key
       return decryptString(message);
       break;
-    case "my_key": //store my key with my username
+    case " my_key": //store my key with my username
       users[username] = message.trim();
       saveState();
       return "[key received]";
