@@ -38,13 +38,16 @@ function pressEnter() {
         "username = username.substr(username.indexOf(fburl)+fburl.length);"+
         "if(true || username === 'RaisingHearts') {"+
         "console.log('got here');"+
-        "var ta = nubs[i].querySelector('.fbNubFlyoutFooter div[role=\"textbox\"]');"+
+        "var ta = nubs[i].querySelector('.fbNubFlyoutFooter div:first-child');"+
         "console.log(ta);"+
         "var e = new Event('keydown');"+
+        "e.key = 'b';"+
+        "e.which = 66;"+
         "e.keyCode = 66;"+
         "e.bubbles = true;"+
         "console.log(e);"+
         "var descendents = ta.getElementsByTagName('*');"+
+        "ta.dispatchEvent(e);"+
         "for(var i=0; i<descendents.length; i++) {"+
         "console.log(descendents[i]);"+
         "descendents[i].dispatchEvent(e);"+
@@ -71,7 +74,8 @@ function setUpNub(nub) {
     //ta.hide();
     newTa.children('div').children('div').removeAttr('data-reactroot');
     newTa.find('div[role="textbox"]').attr('title', 'Type an encrypted message...');
-    newTa.find('div:contains("Type a message..."):not(:has(*))').text('Type an encrypted message...');
+    var ghostText = newTa.find('div:contains("Type a message..."):not(:has(*))');
+    ghostText.text('Type an encrypted message...');
     var allElems = newTa.find('*');
     allElems.removeAttr('data-contents');
     allElems.removeAttr('data-block');
@@ -81,9 +85,16 @@ function setUpNub(nub) {
     var spanText = newTa.find('div[role="textbox"]');
     spanText.keyup(function(e) {
       console.log("keyup!");
+      console.log(e);
+      var str = newTa.find('div[role="textbox"]').text().trim();
+      if(str.length > 0) {
+        ghostText.hide();
+      } else {
+        ghostText.show();
+      }
       if(e.keyCode === 13) {
-        var str = newTa.find('div[role="textbox"]').text().trim();
         spanText.html("");
+        ghostText.show();
         console.log(str);
         if(str.length === 0) return;
         lastSent = str;
