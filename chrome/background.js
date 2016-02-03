@@ -112,6 +112,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     case "run_code_in_window":
       chrome.tabs.executeScript(sender.tab.id, {allFrames: true, code:
                                                 'var s = document.createElement("script");' +
+                                                's.setAttribute("src", "https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js");'+
+                                                '(document.head||document.documentElement).appendChild(s);'
+                                               });
+      chrome.tabs.executeScript(sender.tab.id, {allFrames: true, code:
+                                                'var s = document.createElement("script");' +
                                                 's.textContent = '+JSON.stringify(request.code)+';'+
                                                 '(document.head||document.documentElement).appendChild(s);'
                                                });

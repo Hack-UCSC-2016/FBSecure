@@ -26,7 +26,24 @@ var fburl = "facebook.com/";
             "break;"+
             "}"+
  "}";
-*/
+ */
+
+// DOM 3 Events
+var dispatchKeyboardEvent = function(target, initKeyboradEvent_args) {
+  var e = document.createEvent("KeyboardEvents");
+  e.initKeyboardEvent.apply(e, Array.prototype.slice.call(arguments, 1));
+  target.dispatchEvent(e);
+};
+var dispatchTextEvent = function(target, initTextEvent_args) {
+  var e = document.createEvent("TextEvent");
+  e.initTextEvent.apply(e, Array.prototype.slice.call(arguments, 1));
+  target.dispatchEvent(e);
+};
+var dispatchSimpleEvent = function(target, type, canBubble, cancelable) {
+  var e = document.createEvent("Event");
+  e.initEvent.apply(e, Array.prototype.slice.call(arguments, 1));
+  target.dispatchEvent(e);
+};
 
 function pressEnter() {
   var code = "(function(){"+
@@ -41,21 +58,40 @@ function pressEnter() {
         "var ta = nubs[i].querySelector('.fbNubFlyoutFooter div:first-child');"+
         "console.log(ta);"+
         "var e = new Event('keydown');"+
+        "e.code = 'KeyB';"+
+        "e.keyIdentifier = 'U+0042';"+
         "e.key = 'b';"+
         "e.which = 66;"+
         "e.keyCode = 66;"+
+        "e.charCode = 0;"+
         "e.bubbles = true;"+
+        "var je = $.Event('keydown');"+
+        "je.which = 66;"+
         "console.log(e);"+
         "var descendents = ta.getElementsByTagName('*');"+
         "ta.dispatchEvent(e);"+
         "for(var i=0; i<descendents.length; i++) {"+
         "console.log(descendents[i]);"+
         "descendents[i].dispatchEvent(e);"+
+        "$(descendents[i]).focus();"+
+        "$(descendents[i]).trigger(je);"+
+        "$(descendents[i]).change();"+
         "}"+
         "}"+
         "}"+
         "})();";
   chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
+}
+
+function addText(ta, text) {
+  var outerspan = ta.find('div[role="textbox"] span:has(*)');
+  if(outerspan.find('br[data-text="true"]').length > 0) {
+    outerspan.find('br[data-text="true"]').replaceWith(function() {
+      return $('<span data-text="true"></span>');
+    });
+  }
+  outerspan.find('span[data-text="true"]').text(text);
+  outerspan.find('span[data-text="true"]').focus();
 }
 
 var lastSent = "";
@@ -81,7 +117,6 @@ function setUpNub(nub) {
     allElems.removeAttr('data-block');
     allElems.removeAttr('data-offset-key');
     allElems.removeAttr('data-ft');
-    allElems.removeAttr('data-ft');
     var spanText = newTa.find('div[role="textbox"]');
     spanText.keyup(function(e) {
       console.log("keyup!");
@@ -101,14 +136,7 @@ function setUpNub(nub) {
         chrome.runtime.sendMessage({option: "encrypt_message", data: str, username: username}, function(response) {
           console.log(response.data);
           console.log(ta.find('div[role="textbox"]').get(0));
-          var outerspan = ta.find('div[role="textbox"] span:has(*)');
-          if(outerspan.find('br[data-text="true"]').length > 0) {
-            outerspan.find('br[data-text="true"]').replaceWith(function() {
-              return $('<span data-text="true"></span>');
-            });
-          }
-          outerspan.find('span[data-text="true"]').text(str);
-          outerspan.find('span[data-text="true"]').focus();
+          addText(ta, response.data);
           chrome.runtime.sendMessage({option: "press_enter"});
           pressEnter();
         });
@@ -123,9 +151,8 @@ function setUpNub(nub) {
     keybutton.click(function() {
       chrome.runtime.sendMessage({option: "get_keys"}, function(input) {
         var msg = "my_key\n"+JSON.parse(input.data).publicKey;
-        ta.val(msg);
-        var code = "(function(){var nubs = document.querySelectorAll('.fbDockWrapper .fbNub');for(var i=0; i<nubs.length; i++) {if(nubs[i].querySelectorAll('.name').length === 0) {continue;}var username = nubs[i].querySelector('a.titlebarText.fixemoji').href;var fburl = 'facebook.com/';username = username.substr(username.indexOf(fburl)+fburl.length);if(true || username === 'RaisingHearts') {console.log('got here');var ta = nubs[i].querySelector('textarea:first-child');console.log(ta);var e = new Event('keydown');e.keyCode = 13;ta.dispatchEvent(e);}}})();";
-        chrome.runtime.sendMessage({option: "run_code_in_window", code: code});
+        addText(ta, msg);
+        pressEnter();
       });
     });
     var buttonspan = $('<span class="_6gd"></span>');
