@@ -1,4 +1,4 @@
-#FBSecure
+# FBSecure
 A basic add-on that encrypts your messages on Facebook Messenger, protecting your privacy and your friends' privacy.
 
 ## Inspiration
